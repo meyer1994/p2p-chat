@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.20.2",
-    "libp2p": "^0.35.7",
+    "libp2p": "^0.35.8",
     "libp2p-bootstrap": "^0.14.0",
     "libp2p-gossipsub": "^0.12.1",
     "libp2p-kad-dht": "^0.28.1",
