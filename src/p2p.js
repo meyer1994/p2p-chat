@@ -2,7 +2,7 @@ import Libp2p from 'libp2p'
 
 // import TCP from 'libp2p-tcp'
 // import mDNS from 'libp2p-mdns'
-import Mplex from 'libp2p-mplex'
+import { Mplex } from 'libp2p-mplex'
 import KadDHT from 'libp2p-kad-dht'
 import { NOISE } from 'libp2p-noise'
 import Gossipsub from 'libp2p-gossipsub'
@@ -50,8 +50,8 @@ export const options = {
 }
 
 export const plugin = {
-  install (Vue, node) {
-    Vue.prototype.$p2p = node
+  install (app, node) {
+    app.config.globalProperties.$p2p = node
   }
 }
 
