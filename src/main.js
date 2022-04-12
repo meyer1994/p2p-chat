@@ -3,13 +3,13 @@ import { createApp } from 'vue'
 import 'sakura.css/css/sakura-dark.css'
 
 import App from './App.vue'
-import * as Node from './p2p'
+import { createP2p } from './p2p'
 
 const main = async () => {
-  const node = await Node.create()
+  const p2p = await createP2p()
 
   createApp(App)
-    .use(Node.plugin, node)
+    .use(p2p)
     .mount('#app')
 }
 

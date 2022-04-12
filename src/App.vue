@@ -32,7 +32,7 @@
       <p> Total peers: {{ peers.length }} </p>
 
       <ul>
-        <li v-for="(item, i) of peers" :key="i"> {{ item.toB58String() }} </li>
+        <li v-for="(item, i) of peers" :key="i"> {{ item }} </li>
       </ul>
     </section>
   </div>
@@ -56,7 +56,7 @@ export default {
 
   computed: {
     self () {
-      return this.$p2p.peerId.toB58String()
+      return this.$p2p.peerId.toString()
     },
     chat () {
       return this.messages.join('\n')
@@ -80,7 +80,7 @@ export default {
 
   mounted () {
     // New message
-    this.$p2p.pubsub.on('chat', msg => {
+    this.$p2p.pubsub.addEventListener('chat', msg => {
       const message = toString(msg.data)
       this.messages.push(message)
     })
@@ -88,8 +88,8 @@ export default {
     this.$p2p.pubsub.subscribe('chat')
 
     // New peer
-    this.$p2p.peerStore.on('peer', peer => {
-      this.peers.push(peer)
+    this.$p2p.peerStore.addEventListener('peer', e => {
+      this.peers.push(e.detail.id)
     })
   }
 }
