@@ -1,7 +1,55 @@
+<script setup>
+import { ref, computed, inject, onMounted } from 'vue'
+
+import { toString } from 'uint8arrays/to-string'
+import { fromString } from 'uint8arrays/from-string'
+
+const libp2p = inject('libp2p')
+
+const subs = ref([])
+const peers = ref([])
+const message = ref('')
+const messages = ref([])
+
+const chat = computed(() => messages.value.join('\n'))
+
+const updatePeers = async e => peers.value.push(e.detail)
+onMounted(() => libp2p.peerStore.addEventListener('peer', updatePeers))
+
+const updateSubs = e => {
+  for (const sub of e.detail.subscriptions) {
+    if (sub.topic !== 'chat') {
+      continue
+    }
+
+    if (sub.subscribe !== true) {
+      continue
+    }
+
+    subs.value.push(e.detail)
+    return
+  }
+}
+onMounted(() => libp2p.pubsub.addEventListener('pubsub:subscription-change', updateSubs))
+
+const onMessage = async e => {
+  const data = toString(e.detail.data)
+  messages.value.push(data)
+}
+onMounted(() => libp2p.pubsub.addEventListener('chat', onMessage))
+
+const sendMessage = async () => {
+  const detail = fromString(message.value)
+  await libp2p.pubsub.dispatchEvent({ type: 'chat', detail })
+  messages.value.push(message.value)
+  message.value = ''
+}
+</script>
+
 <template>
   <div id="app">
     <h1> P2P chat </h1>
-    <p> Your id: {{ self }} </p>
+    <p> Your id: {{ libp2p.peerId }} </p>
 
     <!-- Chat -->
     <section>
@@ -19,78 +67,20 @@
       </form>
     </section>
 
+    <!-- Chat -->
+    <section>
+      <h2> Chat ({{ subs.length }}) </h2>
+      <ul>
+        <li v-for="s of subs" :key="s.peerId"> {{ s.peerId }} </li>
+      </ul>
+    </section>
+
     <!-- Peers -->
     <section>
-      <h2> Peers </h2>
-
-      <form @submit.prevent="fetchPeer">
-        <label for="peer"> Connect </label>
-        <input type="text" name="peer" v-model="peer" placeholder="id">
-        <button @press="fetchPeer"> Connect </button>
-      </form>
-
-      <p> Total peers: {{ peers.length }} </p>
-
+      <h2> Peers ({{ peers.length }}) </h2>
       <ul>
-        <li v-for="(item, i) of peers" :key="i"> {{ item }} </li>
+        <li v-for="p of peers" :key="p.id"> {{ p.id }} </li>
       </ul>
     </section>
   </div>
 </template>
-
-<script>
-import PeerId from 'peer-id'
-import { toString } from 'uint8arrays/to-string'
-import { fromString } from 'uint8arrays/from-string'
-
-export default {
-  name: 'App',
-
-  data: () => ({
-    peer: '',
-    peers: [],
-
-    message: '',
-    messages: []
-  }),
-
-  computed: {
-    self () {
-      return this.$p2p.peerId.toString()
-    },
-    chat () {
-      return this.messages.join('\n')
-    }
-  },
-
-  methods: {
-    async fetchPeer () {
-      const id = PeerId.createFromB58String(this.peer)
-      const peer = await this.$p2p.peerRouting.findPeer(id)
-      this.peers.push(peer.id)
-      this.peer = ''
-    },
-    async sendMessage () {
-      const msg = fromString(this.message)
-      await this.$p2p.pubsub.publish('chat', msg)
-      this.messages.push(this.message)
-      this.message = ''
-    }
-  },
-
-  mounted () {
-    // New message
-    this.$p2p.pubsub.addEventListener('chat', msg => {
-      const message = toString(msg.data)
-      this.messages.push(message)
-    })
-
-    this.$p2p.pubsub.subscribe('chat')
-
-    // New peer
-    this.$p2p.peerStore.addEventListener('peer', e => {
-      this.peers.push(e.detail.id)
-    })
-  }
-}
-</script>
