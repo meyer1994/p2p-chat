@@ -13,7 +13,7 @@
     "@libp2p/floodsub": "^1.0.7",
     "@libp2p/kad-dht": "^1.0.16",
     "@libp2p/mplex": "^1.1.2",
-    "@libp2p/tracked-map": "^1.0.7",
+    "@libp2p/tracked-map": "^1.0.8",
     "@libp2p/webrtc-star": "^1.0.12",
     "core-js": "^3.22.8",
     "libp2p": "^0.37.2",
