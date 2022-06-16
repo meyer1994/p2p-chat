@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@chainsafe/libp2p-noise": "^6.2.0",
-    "@libp2p/bootstrap": "^1.0.6",
+    "@libp2p/bootstrap": "^2.0.0",
     "@libp2p/floodsub": "^2.0.0",
     "@libp2p/kad-dht": "^2.0.0",
     "@libp2p/mplex": "^1.2.1",
