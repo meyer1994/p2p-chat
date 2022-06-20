@@ -11,7 +11,7 @@
     "@chainsafe/libp2p-noise": "^6.2.0",
     "@libp2p/bootstrap": "^1.0.6",
     "@libp2p/floodsub": "^2.0.0",
-    "@libp2p/kad-dht": "^2.0.0",
+    "@libp2p/kad-dht": "^3.0.0",
     "@libp2p/mplex": "^1.2.1",
     "@libp2p/tracked-map": "^1.0.8",
     "@libp2p/webrtc-star": "^2.0.1",
